@@ -36,8 +36,10 @@ unsigned int debounce(volatile uint8_t *port, uint8_t pin) {
  * Set start attributes
  */
 void start() {
+    //DDRB |= (1 << PB0)
     TCCR1 |= (1 << CS10);
     PORTB &= ~(1 << PB3);
+    PORTB |= (1 << PB4);
     sample = 0;
     run = 1;
 }
@@ -46,9 +48,11 @@ void start() {
  * Set stop attributes
  */
 void stop() {
+    //DDRB &= ~(1 << PB0);
     TCCR1 |= (1 << CS10);
     PORTB |= (1 << PB3);
     PORTB |= (1 << PB4);
+    OCR0A = 0;
     run = 0;
 }
 
@@ -58,7 +62,7 @@ void stop() {
 void cpuInit(void) {
     DDRB = 0x00;
     /** output pins */
-    DDRB = (1 << PB0) | (1 << PB2) | (1 << PB3) | (1 << PB4);
+    DDRB |= (1 << PB0) | (1 << PB2) | (1 << PB3) | (1 << PB4);
     /** input pins */
     DDRB &= ~(1 << PB1); /* pin PB1 input */
 
