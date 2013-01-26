@@ -30,5 +30,8 @@ hex:  $(PRG).hex
 install: load
 
 load: $(PRG).hex
-	avrdude -p t85 -c usbtiny -U lfuse:w:0xE2:m -U flash:w:$<
+	#avrdude -p t85 -c usbtiny -U lfuse:w:0xE2:m -U flash:w:$<
+	avrdude -P usb -p t85 -c dragon_hvsp -U lfuse:w:0xE2:m -U flash:w:$<
 
+status:
+	avrdude -P usb -p t85 -c dragon_hvsp -v
