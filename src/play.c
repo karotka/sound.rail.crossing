@@ -1,16 +1,16 @@
-#define F_CPU 8000000UL         /** Lfuse (ATtiny85) must be set on 0xE2 */
-#define DELAY 1000              /** Delay fof hold in run state, bypass for disconnecting from rails */
-#define EXTERNALINT             /** Use externall interrupt for change state or button */
+#define F_CPU 8000000UL /** Lfuse (ATtiny85) must be set on 0xE2 */
+#define DELAY 1000 /** Delay fof hold in run state, bypass for disconnecting from rails */
+#define EXTERNALINT /** Use externall interrupt for change state or button */
 
 /**
- * White LED is connected to PB5 (Externall reset pin)
- * For white LED enable, you need to disable externall reset
- * in HVSP mode (set Fuse High Byte)
- * RSTDISBL = 0 (programmed)
- *
- * avrdude -P usb -p t85 -c dragon_hvsp -t
- * w hfuse 0 0x5f
- **/
+* White LED is connected to PB5 (Externall reset pin)
+* For white LED enable, you need to disable externall reset
+* in HVSP mode (set Fuse High Byte)
+* RSTDISBL = 0 (programmed)
+*
+* avrdude -P usb -p t85 -c dragon_hvsp -t
+* w hfuse 0 0x5f
+**/
 
 #include <stdint.h>
 #include <avr/io.h>
@@ -25,6 +25,9 @@ volatile unsigned int count2;
 volatile unsigned int count3;
 volatile unsigned int servoPos;
 volatile unsigned int run;
+
+volatile unsigned int w;
+volatile unsigned int pos;
 
 unsigned int servoMin = 568; // 570 = 1ms
 unsigned int servoMax = 605; // 600 = 2ms
@@ -42,8 +45,8 @@ unsigned int debounce(volatile uint8_t *port, uint8_t pin) {
 }
 
 /**
- * Set start attributes
- */
+* Set start attributes
+*/
 void start() {
     TCCR0A = (1 << COM0A1) | (1 << COM0A0) | (1 << WGM01) | (1 << WGM00);
     TCCR0B = (1 < WGM02) | (1 << CS00);
@@ -56,11 +59,11 @@ void start() {
 }
 
 /**
- * Set stop attributes
- */
+* Set stop attributes
+*/
 void stop() {
     TCCR0A = 0;
-    TCCR0B = (1 < WGM02) | (1 << CS00) | (1 << CS02);
+    TCCR0B = (1 < WGM02) | (1 << CS00);// | (1 << CS02);
 
     TCCR1 |= (1 << CS10);
     PORTB |= (1 << PB3);
@@ -70,8 +73,8 @@ void stop() {
 }
 
 /**
- * Chip init attributes
- */
+* Chip init attributes
+*/
 void cpuInit(void) {
     DDRB = 0x00;
     /** output pins */
@@ -95,7 +98,7 @@ void cpuInit(void) {
 
 #ifdef EXTERNALINT
     /** externall interupt change from INT0 on PC1 (PB1)
-     *  for better circuit and servo connection */
+     * for better circuit and servo connection */
     MCUCR |= (1 << ISC01);
     GIMSK |= (1 << PCIE);
     PCMSK |= (1 << PCINT1);
@@ -113,16 +116,16 @@ void cpuInit(void) {
 }
 
 /**
- * Externall interrupt on PCINT0
- */
+* Externall interrupt on PCINT0
+*/
 ISR(PCINT0_vect) {
     // simply set this counter
     count3 = DELAY;
 }
 
 /**
- * Timer 1 overflow, servo driver
- */
+* Timer 1 overflow, servo driver
+*/
 ISR(TIMER1_COMPA_vect) {
     count2++;
     // 630 = 20 ms
@@ -151,8 +154,8 @@ ISR(TIMER1_COMPA_vect) {
 }
 
 /**
- * Timer 0 overflow for playing sound
- */
+* Timer 0 overflow for playing sound
+*/
 ISR(TIMER0_OVF_vect) {
 
     count0++;
@@ -173,9 +176,41 @@ ISR(TIMER0_OVF_vect) {
             }
         }
     } else {
-        if (count0 == 13) {
+        /*
+        if (count0 > 20500 && count0 < 24000) {
+            if ((count0 - 20000) % 50 == 0) {
+                w = (count0 - 20000) / 50;
+                pos = 0;
+            } else {
+                if (w > pos) {
+                    PORTB &= ~(1 << PB5);
+                } else {
+                    PORTB |= 1 << PB5;
+                }
+                pos++;
+            }
+        }
+        if (count0 > 46000 && count0 < 48000) {
+            if ((count0 - 46000) % 30 == 0) {
+                w = (count0 - 46000) / 30;
+                pos = 0;
+            } else {
+                if (w > pos) {
+                    PORTB |= 1 << PB5;
+                } else {
+                    PORTB &= ~(1 << PB5);
+                }
+                pos++;
+            }
+        }
+        */
+
+        if (count0 == 15000) {
+            PORTB &= ~(1 << PB5);
+        } else
+        if (count0 == 30000) {
+            PORTB |= 1 << PB5;
             count0 = 0;
-            PORTB ^= 1 << PB5;
         }
     }
 }

@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.25" unitdist="mm" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.0125" altunitdist="mm" altunit="mm"/>
+<grid distance="0.125" unitdist="mm" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.0125" altunitdist="mm" altunit="mm"/>
 <layers>
 <layer number="1" name="Top" color="8" fill="1" visible="yes" active="yes"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="no" active="yes"/>
@@ -222,8 +222,8 @@
 <wire x1="27.75" y1="69.75" x2="36.25" y2="69.75" width="0.254" layer="52"/>
 <wire x1="36.25" y1="69.75" x2="36.25" y2="74.5" width="0.254" layer="52"/>
 <wire x1="36.25" y1="74.5" x2="27.75" y2="74.5" width="0.254" layer="52"/>
-<text x="28.25" y="72.5" size="1.4224" layer="51">+12V</text>
-<text x="28.75" y="70.5" size="1.4224" layer="51">-12V</text>
+<text x="28.25" y="72.5" size="1.4224" layer="51">+</text>
+<text x="28.5" y="70.5" size="1.4224" layer="51">-</text>
 <wire x1="48" y1="77.5" x2="48" y2="69.75" width="0.254" layer="52"/>
 <wire x1="48" y1="69.75" x2="59.75" y2="69.75" width="0.254" layer="52"/>
 <wire x1="59.75" y1="69.75" x2="59.75" y2="77.75" width="0.254" layer="52"/>
@@ -258,6 +258,8 @@
 <wire x1="73.5" y1="31.25" x2="72" y2="32.75" width="0.254" layer="52"/>
 <wire x1="70" y1="35.75" x2="47.5" y2="35.75" width="0" layer="52"/>
 <wire x1="70" y1="34.25" x2="47.5" y2="34.25" width="0" layer="52"/>
+<text x="30.25" y="71.25" size="1.27" layer="51">12V</text>
+<text x="87.875" y="48.375" size="1.27" layer="51">(EXERNAL START)</text>
 </plain>
 <libraries>
 <library name="linear">
